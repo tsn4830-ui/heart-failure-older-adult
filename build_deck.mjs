@@ -10,15 +10,15 @@ const assetDir = path.join(outDir, "assets");
 
 const W = 1280;
 const H = 720;
-const navy = "#0b2f59";
-const blue = "#1b6ca8";
-const teal = "#1f8a8a";
-const red = "#b42318";
-const amber = "#c77d0e";
-const ink = "#182230";
-const muted = "#667085";
-const line = "#d0d7e2";
-const paper = "#f7f9fc";
+const navy = "#102A43";
+const blue = "#276EF1";
+const teal = "#0F9D9A";
+const red = "#D64F3A";
+const amber = "#D99018";
+const ink = "#243B53";
+const muted = "#627D98";
+const line = "#D9E2EC";
+const paper = "#F8FAFC";
 
 const sourceLine = "Source: Lewsey SC et al. Circulation. 2026. DOI: 10.1161/CIR.0000000000001437";
 let sourceFigures = {};
@@ -258,26 +258,28 @@ function addText(slide, text, left, top, width, height, style = {}) {
   return box;
 }
 
-function addRect(slide, left, top, width, height, fill, stroke = "none", radius = "rounded-lg") {
-  return slide.shapes.add({
-    geometry: "roundRect",
+function addRect(slide, left, top, width, height, fill, stroke = "none", radius = "rect") {
+  const config = {
+    geometry: radius === "rect" ? "rect" : "roundRect",
     position: { left, top, width, height },
     fill,
-    line: { style: "solid", fill: stroke, width: stroke === "none" ? 0 : 1 },
-    borderRadius: radius
-  });
+    line: { style: "solid", fill: stroke, width: stroke === "none" ? 0 : 1 }
+  };
+  if (radius !== "rect") config.borderRadius = radius;
+  return slide.shapes.add(config);
 }
 
 function addFooter(slide, index) {
-  addText(slide, sourceLine, 58, 682, 760, 18, { fontSize: 10, color: "#7a8699" });
-  addText(slide, `${index + 1}/${slides.length}`, 1130, 682, 70, 18, { fontSize: 11, color: "#7a8699", alignment: "right" });
-  addRect(slide, 1010, 650, 192, 26, "rgba(255,255,255,0.72)", "#d7dee9", "rounded-full");
-  addText(slide, "阿婷醫師的讀書筆記", 1030, 655, 150, 16, { fontSize: 10, color: "#526070", bold: true, alignment: "right" });
+  slide.shapes.add({ geometry: "rect", position: { left: 58, top: 662, width: 1164, height: 1 }, fill: line, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, sourceLine, 58, 680, 790, 16, { fontSize: 10, color: muted });
+  addText(slide, `${String(index + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`, 1086, 680, 116, 16, { fontSize: 10, color: muted, bold: true, alignment: "right" });
+  addText(slide, "阿婷醫師的讀書筆記", 930, 650, 250, 15, { fontSize: 9, color: "#829AB1", bold: true, alignment: "right" });
 }
 
 function addHeader(slide, s) {
-  addText(slide, s.kicker, 58, 42, 470, 24, { fontSize: 13, color: blue, bold: true });
-  addText(slide, s.title, 58, 76, 900, 62, { fontSize: 34, color: navy, bold: true });
+  slide.shapes.add({ geometry: "rect", position: { left: 58, top: 45, width: 8, height: 20 }, fill: blue, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, s.kicker, 82, 43, 470, 24, { fontSize: 13, color: muted, bold: true });
+  addText(slide, s.title, 58, 78, 1060, 60, { fontSize: 36, color: navy, bold: true });
   slide.shapes.add({
     geometry: "rect",
     position: { left: 58, top: 146, width: 1164, height: 2 },
@@ -288,46 +290,53 @@ function addHeader(slide, s) {
 
 function addBullets(slide, bullets, left, top, width, fontSize = 23) {
   let y = top;
-  for (const bullet of bullets) {
-    addText(slide, "•", left, y + 2, 24, 30, { fontSize: fontSize + 4, color: blue, bold: true });
-    addText(slide, bullet, left + 34, y, width - 34, 58, { fontSize, color: ink });
-    y += 72;
+  for (const [index, bullet] of bullets.entries()) {
+    addText(slide, `0${index + 1}`, left, y + 2, 48, 30, { fontSize: 16, color: [blue, teal, red][index % 3], bold: true });
+    slide.shapes.add({ geometry: "rect", position: { left: left + 62, top: y + 13, width: 4, height: 36 }, fill: [blue, teal, red][index % 3], line: { style: "solid", fill: "none", width: 0 } });
+    addText(slide, bullet, left + 88, y, width - 88, 58, { fontSize, color: ink });
+    if (index < bullets.length - 1) slide.shapes.add({ geometry: "rect", position: { left: left + 88, top: y + 67, width: width - 88, height: 1 }, fill: line, line: { style: "solid", fill: "none", width: 0 } });
+    y += 82;
   }
 }
 
 function drawDefault(slide, s) {
   addHeader(slide, s);
-  addBullets(slide, s.bullets, 88, 184, 1040, 23);
+  slide.shapes.add({ geometry: "rect", position: { left: 1142, top: 180, width: 12, height: 332 }, fill: "#E7EFF8", line: { style: "solid", fill: "none", width: 0 } });
+  slide.shapes.add({ geometry: "rect", position: { left: 1154, top: 180, width: 12, height: 214 }, fill: "#D4E5F9", line: { style: "solid", fill: "none", width: 0 } });
+  addBullets(slide, s.bullets, 88, 184, 1010, 23);
   if (s.callout) {
-    addRect(slide, 88, 552, 1040, 72, "#eef6fb", "#b8d7ec", "rounded-lg");
-    addText(slide, s.callout, 116, 570, 984, 36, { fontSize: 22, color: navy, bold: true });
+    addRect(slide, 88, 548, 1010, 70, navy);
+    addText(slide, "CLINICAL TAKEAWAY", 116, 565, 210, 16, { fontSize: 11, color: "#A9C8F7", bold: true });
+    addText(slide, s.callout, 116, 586, 944, 24, { fontSize: 19, color: "#FFFFFF", bold: true });
   }
 }
 
 function drawCover(slide, s) {
-  slide.background.fill = "#f4f8fb";
+  slide.background.fill = paper;
   slide.shapes.add({
     geometry: "rect",
     position: { left: 0, top: 0, width: 1280, height: 720 },
-    fill: "#f4f8fb",
+    fill: paper,
     line: { style: "solid", fill: "none", width: 0 }
   });
   slide.shapes.add({
     geometry: "rect",
-    position: { left: 0, top: 0, width: 1280, height: 112 },
+    position: { left: 890, top: 0, width: 390, height: 720 },
     fill: navy,
     line: { style: "solid", fill: "none", width: 0 }
   });
-  addText(slide, s.kicker, 72, 44, 520, 24, { fontSize: 16, color: "#d8e8f6", bold: true });
-  addText(slide, s.title, 72, 178, 760, 84, { fontSize: 50, color: navy, bold: true });
-  addText(slide, s.subtitle, 72, 282, 800, 84, { fontSize: 27, color: ink });
-  addRect(slide, 72, 420, 760, 82, "#ffffff", "#ccd8e6", "rounded-lg");
-  addText(slide, "AHA 2026 scientific statement | 台灣醫師閱讀版", 104, 442, 700, 28, { fontSize: 23, color: navy, bold: true });
-  addText(slide, "整理重點：GDMT、裝置治療、共病與衰弱、shared decision-making、緩和醫療與照護落地", 104, 475, 690, 24, { fontSize: 16, color: muted });
-  addRect(slide, 910, 174, 238, 238, "#ffffff", "#d6e1ec", "rounded-full");
-  addText(slide, "HF", 962, 236, 132, 62, { fontSize: 54, color: red, bold: true, alignment: "center" });
-  addText(slide, "Older Adult", 936, 310, 184, 32, { fontSize: 23, color: navy, bold: true, alignment: "center" });
-  addText(slide, "阿婷醫師的讀書筆記", 860, 612, 310, 24, { fontSize: 18, color: "#526070", bold: true, alignment: "right" });
+  slide.shapes.add({ geometry: "rect", position: { left: 72, top: 70, width: 12, height: 92 }, fill: red, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, s.kicker, 110, 72, 520, 24, { fontSize: 15, color: muted, bold: true });
+  addText(slide, s.title, 72, 198, 760, 86, { fontSize: 52, color: navy, bold: true });
+  addText(slide, s.subtitle, 72, 318, 760, 44, { fontSize: 25, color: ink });
+  slide.shapes.add({ geometry: "rect", position: { left: 72, top: 417, width: 720, height: 2 }, fill: line, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, "AHA 2026 SCIENTIFIC STATEMENT", 72, 448, 500, 20, { fontSize: 13, color: blue, bold: true });
+  addText(slide, "GDMT  |  裝置治療  |  衰弱與共病  |  共同決策  |  緩和醫療", 72, 485, 730, 28, { fontSize: 18, color: navy, bold: true });
+  addText(slide, "台灣醫師閱讀版", 72, 547, 340, 28, { fontSize: 20, color: muted });
+  addText(slide, "65+", 940, 142, 260, 120, { fontSize: 82, color: "#FFFFFF", bold: true, alignment: "center" });
+  addText(slide, "HEART FAILURE", 940, 276, 260, 26, { fontSize: 17, color: "#A9C8F7", bold: true, alignment: "center" });
+  slide.shapes.add({ geometry: "rect", position: { left: 970, top: 352, width: 200, height: 2 }, fill: teal, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, "evidence-driven\npatient-centered", 954, 382, 235, 70, { fontSize: 22, color: "#FFFFFF", bold: true, alignment: "center" });
 }
 
 function drawMatrix(slide, s) {
@@ -378,23 +387,17 @@ function drawThree(slide, s) {
 
 function drawTimeline(slide, s) {
   addHeader(slide, s);
-  const y = 202;
+  const y = 250;
+  slide.shapes.add({ geometry: "rect", position: { left: 104, top: y + 34, width: 1040, height: 4 }, fill: line, line: { style: "solid", fill: "none", width: 0 } });
   s.steps.forEach((step, i) => {
-    const x = 64 + i * 235;
-    addRect(slide, x, y, 196, 298, "#ffffff", "#cdd8e5", "rounded-lg");
-    addRect(slide, x + 22, y + 22, 48, 48, [red, blue, teal, amber, navy][i], "none", "rounded-full");
-    addText(slide, step[0], x + 22, y + 31, 48, 25, { fontSize: 22, color: "#ffffff", bold: true, alignment: "center" });
-    addText(slide, step[1], x + 22, y + 92, 152, 62, { fontSize: 24, color: navy, bold: true });
-    addText(slide, step[2], x + 22, y + 172, 152, 72, { fontSize: 18, color: ink });
-    if (i < s.steps.length - 1) {
-      slide.shapes.add({
-        geometry: "chevron",
-        position: { left: x + 198, top: y + 132, width: 34, height: 34 },
-        fill: "#d5e1ed",
-        line: { style: "solid", fill: "none", width: 0 }
-      });
-    }
+    const x = 86 + i * 218;
+    const colors = [red, blue, teal, amber, navy];
+    addRect(slide, x, y, 74, 74, colors[i], "none", "rounded-full");
+    addText(slide, step[0], x, y + 19, 74, 28, { fontSize: 24, color: "#FFFFFF", bold: true, alignment: "center" });
+    addText(slide, step[1], x - 18, y + 106, 170, 52, { fontSize: 23, color: navy, bold: true, alignment: "center" });
+    addText(slide, step[2], x - 32, y + 172, 200, 84, { fontSize: 17, color: ink, alignment: "center" });
   });
+  addText(slide, "把五個步驟嵌進每次病程轉折與出院後追蹤。", 88, 560, 1020, 32, { fontSize: 22, color: muted, alignment: "center" });
 }
 
 function drawRefs(slide, s) {
@@ -405,8 +408,8 @@ function drawRefs(slide, s) {
     addText(slide, ref, 132, y, 980, 56, { fontSize: 21, color: ink });
     y += 80;
   });
-  addRect(slide, 88, 570, 1030, 56, "#f0f7f7", "#b7dada", "rounded-lg");
-  addText(slide, "臨床使用提醒：本投影片為文獻閱讀整理，不能取代完整原文、藥品仿單、院內規範或個別病人評估。", 112, 586, 982, 24, { fontSize: 20, color: navy, bold: true });
+  addRect(slide, 88, 568, 1030, 58, navy);
+  addText(slide, "臨床使用提醒：本投影片為文獻閱讀整理，不能取代完整原文、藥品仿單、院內規範或個別病人評估。", 112, 586, 982, 24, { fontSize: 19, color: "#FFFFFF", bold: true });
 }
 
 async function writeBlob(filePath, blob) {
