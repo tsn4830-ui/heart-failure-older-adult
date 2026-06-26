@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>高齡心衰竭照護最佳化 | 醫師閱讀版</title>
+    <meta
+      name="description"
+      content="AHA 2026 scientific statement：高齡心衰竭照護最佳化醫師閱讀版投影片，整理 GDMT、CIED、共病衰弱、shared decision-making、緩和醫療與照護落地。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:site_name" content="阿婷醫師的讀書筆記" />
+    <meta property="og:title" content="高齡心衰竭照護最佳化 | 醫師閱讀版" />
+    <meta
+      property="og:description"
+      content="整理 AHA 2026 scientific statement：高齡心衰竭照護中的 GDMT、CIED、共病衰弱、SDM/ACP、緩和醫療與台灣臨床落地重點。"
+    />
+    <meta property="og:image" content="assets/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="2560" />
+    <meta property="og:image:height" content="1440" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">HF</span>
+        <div>
+          <h1>高齡心衰竭照護最佳化</h1>
+          <p>AHA 2026 Scientific Statement | 專業醫師閱讀版</p>
+        </div>
+      </div>
+      <nav class="actions" aria-label="下載與來源">
+        <a href="heart-failure-older-adult.pdf" target="_blank" rel="noopener">下載 PDF</a>
+        <a href="heart-failure-older-adult.pptx" target="_blank" rel="noopener">下載 PPTX</a>
+        <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001437" target="_blank" rel="noopener">原文來源</a>
+      </nav>
+    </header>
+
+    <div id="downloadNotice" class="download-notice" hidden>
+      你正在使用 Facebook／Instagram 內建瀏覽器，下載 PDF 或 PPTX 可能失敗。請點右上角「⋯」，選「在外部瀏覽器開啟」，再按下載。
+    </div>
+
+    <main class="app-shell">
+      <aside class="rail" aria-label="投影片縮圖">
+        <div class="rail-head">
+          <span>Slides</span>
+          <span id="slideCount">1 / 15</span>
+        </div>
+        <ol id="thumbs" class="thumb-list"></ol>
+      </aside>
+
+      <section class="stage" aria-label="投影片展示">
+        <div class="viewer-toolbar">
+          <button id="prevBtn" type="button" aria-label="上一張">‹</button>
+          <div class="progress-wrap" aria-hidden="true">
+            <div id="progress" class="progress"></div>
+          </div>
+          <button id="nextBtn" type="button" aria-label="下一張">›</button>
+        </div>
+
+        <figure class="slide-frame">
+          <img id="slideImage" src="origin_image/slide_01.png" alt="Slide 1" />
+          <figcaption class="watermark" aria-label="阿婷醫師的讀書筆記">
+            <span>阿婷醫師的讀書筆記</span>
+          </figcaption>
+        </figure>
+
+        <div class="mobile-jump">
+          <label for="slideSelect">快速跳轉</label>
+          <select id="slideSelect"></select>
+        </div>
+      </section>
+
+      <aside class="notes-panel" aria-label="逐頁筆記與文獻">
+        <div class="tabs" role="tablist" aria-label="文字內容">
+          <button id="notesTab" class="active" type="button">逐頁筆記</button>
+          <button id="fullTab" type="button">完整摘要</button>
+        </div>
+        <article id="notesContent" class="notes-content"></article>
+      </aside>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
