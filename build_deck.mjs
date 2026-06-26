@@ -21,6 +21,7 @@ const line = "#d0d7e2";
 const paper = "#f7f9fc";
 
 const sourceLine = "Source: Lewsey SC et al. Circulation. 2026. DOI: 10.1161/CIR.0000000000001437";
+let sourceFigures = {};
 
 const slides = [
   {
@@ -331,27 +332,48 @@ function drawCover(slide, s) {
 
 function drawMatrix(slide, s) {
   addHeader(slide, s);
-  const positions = [
-    [88, 190], [666, 190], [88, 396], [666, 396]
-  ];
-  s.cells.forEach((cell, i) => {
-    const [x, y] = positions[i];
-    addRect(slide, x, y, 490, 148, "#ffffff", "#cdd8e5", "rounded-lg");
-    addText(slide, cell[0], x + 26, y + 22, 430, 32, { fontSize: 25, color: i === 0 ? red : i === 1 ? blue : i === 2 ? teal : amber, bold: true });
-    addText(slide, cell[1], x + 26, y + 68, 430, 52, { fontSize: 21, color: ink });
+  addText(slide, "原始圖表", 84, 184, 170, 26, { fontSize: 16, color: muted, bold: true });
+  slide.images.add({
+    blob: sourceFigures.domain,
+    contentType: "image/png",
+    alt: "AHA Scientific Statement Figure 1: Domain-based strategies to optimize care in older adults with heart failure",
+    fit: "contain",
+    position: { left: 78, top: 216, width: 610, height: 398 },
+    geometry: "rect"
   });
+  slide.shapes.add({ geometry: "rect", position: { left: 720, top: 188, width: 2, height: 430 }, fill: line, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, "臨床解讀", 754, 184, 200, 26, { fontSize: 16, color: muted, bold: true });
+  s.cells.forEach((cell, i) => {
+    const y = 224 + i * 94;
+    const colors = [red, blue, teal, amber];
+    slide.shapes.add({ geometry: "rect", position: { left: 754, top: y, width: 8, height: 58 }, fill: colors[i], line: { style: "solid", fill: "none", width: 0 } });
+    addText(slide, cell[0], 782, y, 350, 28, { fontSize: 23, color: navy, bold: true });
+    addText(slide, cell[1], 782, y + 34, 378, 48, { fontSize: 18, color: ink });
+  });
+  addText(slide, "Figure 1. Lewsey et al., Circulation 2026. 原圖保留英文標示以維持原始內容。", 84, 632, 970, 18, { fontSize: 11, color: muted });
 }
 
 function drawThree(slide, s) {
   addHeader(slide, s);
-  s.columns.forEach((col, i) => {
-    const x = 78 + i * 390;
-    addRect(slide, x, 190, 342, 282, "#ffffff", "#cdd8e5", "rounded-lg");
-    addText(slide, col[0], x + 24, 220, 294, 32, { fontSize: 25, color: [red, blue, teal][i], bold: true });
-    addText(slide, col[1], x + 24, 276, 294, 132, { fontSize: 22, color: ink });
+  slide.images.add({
+    blob: sourceFigures.barriers,
+    contentType: "image/png",
+    alt: "AHA Scientific Statement Figure 2: Barriers and facilitators to GDMT uptake in older adults with heart failure",
+    fit: "contain",
+    position: { left: 72, top: 174, width: 610, height: 442 },
+    geometry: "rect"
   });
-  addRect(slide, 108, 552, 1000, 68, "#fff8ea", "#edc56d", "rounded-lg");
-  addText(slide, s.callout, 136, 570, 944, 30, { fontSize: 23, color: navy, bold: true, alignment: "center" });
+  addText(slide, "用原圖快速定位問題，再回到可介入層級", 748, 188, 400, 34, { fontSize: 24, color: navy, bold: true });
+  s.columns.forEach((col, i) => {
+    const y = 250 + i * 95;
+    const colors = [red, blue, teal];
+    slide.shapes.add({ geometry: "rect", position: { left: 748, top: y, width: 10, height: 62 }, fill: colors[i], line: { style: "solid", fill: "none", width: 0 } });
+    addText(slide, col[0], 780, y, 340, 27, { fontSize: 22, color: navy, bold: true });
+    addText(slide, col[1], 780, y + 32, 350, 52, { fontSize: 17, color: ink });
+  });
+  slide.shapes.add({ geometry: "rect", position: { left: 748, top: 562, width: 390, height: 2 }, fill: amber, line: { style: "solid", fill: "none", width: 0 } });
+  addText(slide, s.callout, 748, 578, 386, 48, { fontSize: 18, color: navy, bold: true });
+  addText(slide, "Figure 2. Lewsey et al., Circulation 2026. 原圖保留英文標示以維持原始內容。", 72, 632, 970, 18, { fontSize: 11, color: muted });
 }
 
 function drawTimeline(slide, s) {
@@ -394,6 +416,10 @@ async function writeBlob(filePath, blob) {
 async function main() {
   await fs.mkdir(imageDir, { recursive: true });
   await fs.mkdir(assetDir, { recursive: true });
+  sourceFigures = {
+    domain: await fs.readFile(path.join(assetDir, "source-figures", "domain-management-figure.png")),
+    barriers: await fs.readFile(path.join(assetDir, "source-figures", "gdmt-barriers-figure.png"))
+  };
   const presentation = Presentation.create({ slideSize: { width: W, height: H } });
 
   slides.forEach((s, index) => {
